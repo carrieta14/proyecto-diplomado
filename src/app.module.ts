@@ -1,9 +1,33 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { ParametersModule } from './modules/parameters/parameters.module';
+import { ParameterValuesModule } from './modules/parameter_values/parameter_values.module';
+import { BooksModule } from './modules/books/books.module';
+import { ProfilesModule } from './modules/profiles/profiles.module';
+import { LoansModule } from './modules/loans/loans.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { join } from 'path';
 
 @Module({
-  imports: [],
+  imports: [TypeOrmModule.forRoot({
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: 'root',
+    database: 'db-diplomado',
+    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    synchronize: false,
+    migrations: ['src/database/migrations/*.ts'],
+    logging: 'all'
+  }),
+  ConfigModule.forRoot({
+    isGlobal: true,
+    envFilePath: join(__dirname, '..', '.env'),
+  }),AuthModule, ParametersModule, ParameterValuesModule, BooksModule, ProfilesModule, LoansModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -45,6 +45,15 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Docker
+```bash
+#crear volumen
+$ docker volume create 
+
+#subir contenedor
+$ docker compose up -d
+```
+
 ## Test
 
 ```bash

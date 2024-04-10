@@ -1,0 +1,45 @@
+import { Controller, Get, Post, Body, Param, Put, Res, HttpStatus, Query } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { UpdateAuthDto } from './dto/update-auth.dto';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) { }
+
+  @Post('/create')
+  create(@Body() createAuthDto: CreateAuthDto, @Res() response: any) {
+    return this.authService.create(createAuthDto).then((user) => {
+      response.status(HttpStatus.CREATED).json({ data: user, code: 201, message: 'usuario creado con exito' });
+    }).catch((error) => {
+      response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
+    });
+  }
+
+  @Get('/show')
+  show(@Res() response) {
+    return this.authService.show().then((users) => {
+      response.status(HttpStatus.OK).json({ data: users, code: 200, message: 'Listado de usuarios existentes' });
+    }).catch(() => {
+      response.status(HttpStatus.NOT_FOUND).json({ message: 'No se encontraron usuarios', code: 400 });
+    });
+  }
+
+  @Get('/detail')
+  detail(@Query('id') id: string, @Res() response: any) {
+    return this.authService.detail(id).then((user) => {
+      response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'Ususario encontrado' });
+    }).catch(() => {
+      response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo encontrar el usuario' });
+    });
+  }
+
+  @Put('/update')
+  update(@Query('id') id: string, @Body() user: UpdateAuthDto, @Res() response) {
+    return this.authService.update(id, user).then((user) => {
+      response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'usuario actualizado con exito' });
+    }).catch(() => {
+      response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo actualizar' });
+    });
+  }
+}

@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb:jammy
+    container_name: db-diplomado
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db-diplomado
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 321admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-diplomado:/var/lib/mysql
+
+volumes:
+  db-diplomado:
+    external: true
