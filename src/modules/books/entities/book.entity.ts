@@ -2,7 +2,7 @@ import { BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany,
          OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 import { Loan } from "../../loans/entities/loan.entity";
-import { UserBook } from "../../auth/entities/authbooks.entiy";
+import { UserBook } from "../../auth/entities/authbooks.entity";
 
 @Entity({ name: 'books' })
 export class Book {
@@ -28,8 +28,8 @@ export class Book {
     state: number;
 
     // Relacion a tabla intermedia UserBook
-    // @OneToMany(() => UserBook, userBook => userBook.book)
-    // userBooks: UserBook[];
+    @OneToMany(() => UserBook, userBook => userBook.book)
+    userBooks: UserBook[];
 
     @ManyToMany(() => Loan, loan => loan.books)
     @JoinTable({ name: 'book_loans' })

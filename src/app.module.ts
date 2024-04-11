@@ -19,10 +19,9 @@ import { join } from 'path';
     username: 'root',
     password: 'root',
     database: 'db-diplomado',
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
+    entities: [__dirname + '/modules/**/entities/*.entity.js'],
     synchronize: false,
-    migrations: ['src/database/migrations/*.ts'],
-    logging: 'all'
+    migrations: [__dirname + '/**/database/migrations/*.js'],
   }),
   ConfigModule.forRoot({
     isGlobal: true,

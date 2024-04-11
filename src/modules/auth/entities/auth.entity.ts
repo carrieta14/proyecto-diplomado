@@ -3,7 +3,7 @@ import { Profile } from "../../profiles/entities/profile.entity";
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 import { Loan } from "../../loans/entities/loan.entity";
-// import { UserBook } from "./authbooks.entiy";
+import { UserBook } from "./authbooks.entity";
 
 @Entity({ name: 'users' })
 export class Auth {
@@ -32,8 +32,8 @@ export class Auth {
     profile: Profile;
 
     // Relacion Tabla intermedia UserBook
-    // @OneToMany(() => UserBook, userBook => userBook.user)
-    // userBooks: UserBook[];
+    @OneToMany(() => UserBook, userBook => userBook.user)
+    userBooks: UserBook[];
 
     @OneToMany(() => Loan, loan => loan.user)
     loans: Loan[];

@@ -4,7 +4,7 @@ import { BooksController } from './books.controller';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
-import { UserBook } from '../auth/entities/authbooks.entiy';
+import { UserBook } from '../auth/entities/authbooks.entity';
 
 @Module({
   controllers: [BooksController],

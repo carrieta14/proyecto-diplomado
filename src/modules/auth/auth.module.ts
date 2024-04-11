@@ -5,7 +5,7 @@ import { JwtStrategies } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { Auth } from './entities/auth.entity';
-import { UserBook } from './entities/authbooks.entiy';
+import { UserBook } from './entities/authbooks.entity';
 import { Profile } from '../profiles/entities/profile.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../../config/jwt.constants';
