@@ -44,6 +44,10 @@ export class BooksService {
   }
 
   async findOne(id: string, rol: string) {
+    const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
+    if (!perfil) {
+      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
+    }
     const book = await this.bookRepository.findOne({ where: { ID: id } });
     return book;
   }
@@ -66,7 +70,6 @@ export class BooksService {
 
     return this.bookRepository.save(book);
   }
-
 
   async remove(id: string, rol: string, updateBookDto: UpdateBookDto) {
     const book = await this.bookRepository.findOne({ where: { ID: id } });
