@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   mariadb:
     image: mariadb:jammy
@@ -10,7 +9,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: 321admin
     ports:
-      - "3306:3306"
+     - "3306:3306"
     volumes:
       - db-diplomado:/var/lib/mysql
 
