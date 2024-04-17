@@ -31,7 +31,7 @@ export class AuthService {
     const new_created = this.authRepository.create(createAuthDto);
 
     new_created.profile = profile;
-    new_created.state = 1;
+    new_created.state = 1; 
     await this.authRepository.save(new_created);
 
     return {

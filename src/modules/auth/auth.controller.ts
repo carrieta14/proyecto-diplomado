@@ -1,11 +1,14 @@
-import { Controller, Get, Post, Body, Param, Put, Res, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Res, HttpStatus, Query, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginDto } from './dto/login-auth.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
+
 
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any) {
@@ -41,5 +44,14 @@ export class AuthController {
     }).catch(() => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo actualizar' });
     });
+  }
+
+  @Post('/login')
+  login(@Body() loginData: LoginDto, @Res() response: any){
+      return this,this.authService.login(loginData).then((data) => {
+        response.status(HttpStatus.OK).json({ data: data, code: 200, message: 'Bienvenido' });
+      }).catch(() => {
+        response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo ingresar' });
+      });
   }
 }
