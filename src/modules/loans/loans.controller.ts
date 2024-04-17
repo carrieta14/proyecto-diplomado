@@ -7,7 +7,7 @@ import { UpdateLoanDto } from './dto/update-loan.dto';
 export class LoansController {
   constructor(private readonly loansService: LoansService) {}
 
-  @Post()
+  @Post('/create_loan')
   create(@Body() createLoanDto: CreateLoanDto) {
     return this.loansService.create(createLoanDto);
   }
@@ -19,16 +19,16 @@ export class LoansController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.loansService.findOne(+id);
+    return this.loansService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('/update_loan/:id')
   update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto) {
-    return this.loansService.update(+id, updateLoanDto);
+    return this.loansService.update(id, updateLoanDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loansService.remove(+id);
+  @Patch('/delete_loan/:id')
+  remove(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto) {
+    return this.loansService.remove(id, updateLoanDto);
   }
 }
