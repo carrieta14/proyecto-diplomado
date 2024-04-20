@@ -1,5 +1,6 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { CreateAuthDto, LoginDto } from './dto/create-auth.dto';
+import { ConflictException, ConsoleLogger, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { CreateAuthDto} from './dto/create-auth.dto';
+import { LoginDto } from './dto/login-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from './entities/auth.entity';
@@ -7,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Profile } from '../profiles/entities/profile.entity';
 import { JwtService } from '@nestjs/jwt';
 import { PayloadJwt } from 'src/interfaces/payload-jwt';
+
 
 @Injectable()
 export class AuthService {
@@ -21,8 +23,11 @@ export class AuthService {
 
   async create(createAuthDto: CreateAuthDto): Promise<any> {
 
-    const user = await this.authRepository.findOne({ where: { email: createAuthDto.email } });
+    const user = await this.authRepository.findOne({ where: { email: createAuthDto.email} });
     if (user) throw new ConflictException(`Usuario con el correo ${createAuthDto.email} ya existe`);
+
+    const document = await this.authRepository.findOne({ where: { document: createAuthDto.document} });
+    if (document) throw new ConflictException(`Usuario con la identificacion ${createAuthDto.document} ya existe`);
 
     const profile = await this.profileRepository.findOne({ where: { ID: createAuthDto.profile } });
     if (!profile) throw new NotFoundException(`perfil mandado no existente`);
@@ -30,22 +35,22 @@ export class AuthService {
     delete createAuthDto.profile;
     const new_created = this.authRepository.create(createAuthDto);
 
-    new_created.profile = profile;
-    new_created.state = 1; 
+    new_created.profile = profile
     await this.authRepository.save(new_created);
 
     return {
       ...new_created,
       token: await this.getJwtToken({
         ID: new_created.ID, first_name: new_created.first_name
-        , last_name: new_created.last_name, email: new_created.email
+        , last_name: new_created.last_name, email: new_created.email,
+        state: new_created.state = 1, profile: new_created.profile.name = profile.name
       })
     };
   }
 
   async show(): Promise<any> {
-    let users = await this.authRepository.find({ relations: ['profiles'] });
-
+    let users = await this.authRepository.find({relations: ['profile'] });
+    console.log(users);
     users.map(user => {
       delete user.password
       return user;
@@ -55,7 +60,8 @@ export class AuthService {
   }
 
   async detail(id: string): Promise<any> {
-    let user = await this.authRepository.findOne({ where: { ID: id }, relations: ['profiles'] });
+    const user = await this.authRepository.findOne({ where: { ID:id }, relations: ['profile']
+    ,select:["ID","first_name","last_name","document_type","document","email","state"]});
 
     if (!user) throw new NotFoundException(`El usuarios con el id ${id} no se encuentra`);
 
@@ -63,7 +69,7 @@ export class AuthService {
   }
 
   async update(id: string, updateAuthDto: UpdateAuthDto): Promise<Auth> {
-    const user = await this.authRepository.findOne( { where: { ID: id } } );
+    const user = await this.authRepository.findOne( { where: { ID: id }} );
 
         if (!user) throw new NotFoundException('Usuario no encontrado');
 
@@ -76,6 +82,17 @@ export class AuthService {
         return this.authRepository.save(user);
   }
 
+  async updatestate(id: string): Promise<any> {
+    const user = await this.authRepository.findOne( { where: { ID: id }, 
+      select:["ID","first_name","last_name","document_type","document","email","state"] } );
+
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+
+    user.state = 0;
+
+    return this.authRepository.save(user);
+  }
+
   async login(loginData: LoginDto): Promise<any> {
     let email = loginData.email.toLowerCase();
     const user = await this.authRepository.findOne({where: { email }});
@@ -83,6 +100,9 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException('Correo invalido');
     if (!passwordValidated) throw new UnauthorizedException('Contraseña invalida');
+
+  
+
     delete user.password;
     const data = {
         ...user,
@@ -90,7 +110,9 @@ export class AuthService {
             ID: user.ID, 
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email
+            email: user.email,
+            state: user.state,
+            profile: user.profile.description,
         })
     };
     return data;

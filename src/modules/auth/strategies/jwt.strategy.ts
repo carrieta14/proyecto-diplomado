@@ -12,6 +12,7 @@ export class JwtStrategies extends PassportStrategy( Strategy ) {
     constructor(
         @InjectRepository(Auth)
         private userRepository: Repository<Auth>
+
     ) {
         super({
             secretOrKey: process.env.JWT_SECRET,
@@ -25,9 +26,9 @@ export class JwtStrategies extends PassportStrategy( Strategy ) {
         const user = await this.userRepository.findOneBy( { ID } );
 
         if( !user ) throw new UnauthorizedException( `Token no valido` );
-        if( user.state != 1 ) throw new UnauthorizedException(`usuarion esta inactivo, comunicarse con IT`);
+        if( user.state != 1 ) throw new UnauthorizedException(`usuario esta inactivo, comunicarse con IT`);
 
-        return user;
+        return user; 
     }
 
 }
