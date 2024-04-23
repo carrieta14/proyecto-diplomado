@@ -5,6 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Loan } from './entities/loan.entity';
 import { Repository } from 'typeorm';
 import { Profile } from '../profiles/entities/profile.entity';
+import { Auth } from '../auth/entities/auth.entity';
+import { UserBook } from '../auth/entities/authbooks.entity';
+import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 
 @Injectable()
 export class LoansService {
@@ -13,16 +16,22 @@ export class LoansService {
     @InjectRepository(Loan)
     private loanRepository: Repository<Loan>,
     @InjectRepository(Profile)
-    private profileRepository: Repository<Profile>
+    private profileRepository: Repository<Profile>,
+    @InjectRepository(Auth)
+    private userRepository: Repository<Auth>
   ) { }
 
-  async create(rol: string, createLoanDto: CreateLoanDto) { 
+  async create(rol: string, createLoanDto: CreateLoanDto, userID:string) {
     const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
     if (perfil.name !== 'admin' && perfil.name !=='adviser') {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
     }
+    const user = await this.userRepository.findOne({where:{ID:userID}});
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
     const new_loan = this.loanRepository.create(createLoanDto);
-    console.log(new_loan);
+    new_loan.user = user;
     await this.loanRepository.save(new_loan);
     return { ...new_loan};
   }

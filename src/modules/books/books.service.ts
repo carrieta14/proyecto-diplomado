@@ -27,9 +27,10 @@ export class BooksService {
     }
 
     const new_book = this.bookRepository.create(createBookDto);
+    new_book.availablity = true;
+    new_book.state = 1;
     await this.bookRepository.save(new_book);
-
-    return { ...new_book };
+    return { ...new_book};
   }
 
   async findAll(rol: string) {

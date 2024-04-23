@@ -8,8 +8,8 @@ export class LoansController {
   constructor(private readonly loansService: LoansService) { }
 
   @Post('/create_loan/:rol')
-  create(@Body() createLoanDto: CreateLoanDto, @Param('rol') rol: string) {
-    return this.loansService.create(rol, createLoanDto);
+  create(@Body() createLoanDto: CreateLoanDto, @Param('rol') rol: string, @Param('userID') userID:string) {
+    return this.loansService.create(rol, createLoanDto, userID);
   }
 
   @Get('/findAll_loans/:rol')
