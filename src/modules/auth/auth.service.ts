@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { Profile } from '../profiles/entities/profile.entity';
 import { JwtService } from '@nestjs/jwt';
 import { PayloadJwt } from 'src/interfaces/payload-jwt';
+import { profile } from 'console';
+import { Parameter } from '../parameters/entities/parameter.entity';
 
 
 @Injectable()
@@ -18,6 +20,8 @@ export class AuthService {
     private authRepository: Repository<Auth>,
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
+    @InjectRepository(Parameter)
+    private parameterRepository: Repository<Parameter>,
     private readonly jwtServices: JwtService
   ) { }
 
@@ -25,6 +29,9 @@ export class AuthService {
 
     const user = await this.authRepository.findOne({ where: { email: createAuthDto.email} });
     if (user) throw new ConflictException(`Usuario con el correo ${createAuthDto.email} ya existe`);
+
+    const parameter = await this.parameterRepository.findOne({where: {name: createAuthDto.document_type}});
+    if(!parameter) throw new NotFoundException(`El parametro ${createAuthDto.document_type} no existe`) 
 
     const document = await this.authRepository.findOne({ where: { document: createAuthDto.document} });
     if (document) throw new ConflictException(`Usuario con la identificacion ${createAuthDto.document} ya existe`);
@@ -43,13 +50,13 @@ export class AuthService {
       token: await this.getJwtToken({
         ID: new_created.ID, first_name: new_created.first_name
         , last_name: new_created.last_name, email: new_created.email,
-        state: new_created.state = 1, profile: new_created.profile.name = profile.name
+        state: new_created.state = 1, profile:new_created.profile.ID = profile.ID
       })
     };
   }
 
   async show(): Promise<any> {
-    let users = await this.authRepository.find({relations: ['profile'] });
+    let users = await this.authRepository.find({where:{state:1},relations: ['profile'] });
     console.log(users);
     users.map(user => {
       delete user.password
@@ -95,15 +102,14 @@ export class AuthService {
 
   async login(loginData: LoginDto): Promise<any> {
     let email = loginData.email.toLowerCase();
-    const user = await this.authRepository.findOne({where: { email }});
+    const user = await this.authRepository.findOne({where: { email }, relations:['profile']});
     const passwordValidated = user.validatePassoword(loginData.password);
 
     if (!user) throw new UnauthorizedException('Correo invalido');
     if (!passwordValidated) throw new UnauthorizedException('Contraseña invalida');
 
-  
-
     delete user.password;
+
     const data = {
         ...user,
         token: await this.getJwtToken({
@@ -112,7 +118,7 @@ export class AuthService {
             last_name: user.last_name,
             email: user.email,
             state: user.state,
-            profile: user.profile.description,
+            profile: user.profile.ID
         })
     };
     return data;

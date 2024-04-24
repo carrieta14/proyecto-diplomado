@@ -12,7 +12,7 @@ import { Profiles } from './decorators/profile.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @UseGuards(jwtAuthGuard)
+  
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any) {
     return this.authService.create(createAuthDto).then((user) => {
@@ -22,8 +22,7 @@ export class AuthController {
     });
   }
 
-  @Profiles('Super-God')
-  @UseGuards(jwtAuthGuard,jwtProfileGuard)
+  @UseGuards(jwtAuthGuard)
   @Get('/show')
   show(@Res() response:any) {
     return this.authService.show().then((users) => {

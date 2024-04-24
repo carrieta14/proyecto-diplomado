@@ -33,7 +33,7 @@ constructor(
 
 async show(): Promise<any> {
 
-  let profiles = await this.profileRepository.find({relations: ['users']});
+  let profiles = await this.profileRepository.find({where:{state:1},relations: ['users']});
 
   profiles.map(profile => {
     return profile

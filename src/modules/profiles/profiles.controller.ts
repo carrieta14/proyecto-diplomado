@@ -13,8 +13,8 @@ export class ProfilesController {
   @UseGuards(jwtAuthGuard)
   @Post('/create')
   create(@Body() CreateProfileDto: CreateProfileDto, @Res() response: any) {
-    return this.profilesService.create(CreateProfileDto).then((user) => {
-      response.status(HttpStatus.CREATED).json({ data: user, code: 201, message: 'Perfil creado con exito' });
+    return this.profilesService.create(CreateProfileDto).then((profile) => {
+      response.status(HttpStatus.CREATED).json({ data: profile, code: 201, message: 'Perfil creado con exito' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     });
@@ -52,7 +52,7 @@ export class ProfilesController {
 
   @UseGuards(jwtAuthGuard)
   @Delete('/delete')
-  remove(@Query('id') id: number, @Res() response: any) {
+  updatestate(@Query('id') id: number, @Res() response: any) {
     return this.profilesService.updatestate(id).then((profile)=> {
       response.status(HttpStatus.OK).json({data: profile, code: 200, message: 'Perfil eliminado con exito'})
     }).catch(() => {
