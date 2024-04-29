@@ -6,5 +6,5 @@ export interface PayloadJwt {
     last_name: string,
     email: string,
     state: number,
-    profile: number
+    profile: Profile
 }

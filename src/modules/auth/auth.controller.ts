@@ -22,7 +22,8 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
+  @Profiles(1)
   @Get('/show')
   show(@Res() response:any) {
     return this.authService.show().then((users) => {

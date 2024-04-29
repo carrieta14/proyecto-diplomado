@@ -50,7 +50,7 @@ export class AuthService {
       token: await this.getJwtToken({
         ID: new_created.ID, first_name: new_created.first_name
         , last_name: new_created.last_name, email: new_created.email,
-        state: new_created.state = 1, profile:new_created.profile.ID = profile.ID
+        state: new_created.state = 1, profile:new_created.profile = profile
       })
     };
   }
@@ -118,7 +118,7 @@ export class AuthService {
             last_name: user.last_name,
             email: user.email,
             state: user.state,
-            profile: user.profile.ID
+            profile: user.profile
         })
     };
     return data;
