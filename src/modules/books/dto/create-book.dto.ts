@@ -8,3 +8,4 @@ export class CreateBookDto {
     amountA:number;
     state: number;
 }
+

@@ -13,7 +13,7 @@ export class Profile {
     @Column()
     description: string;
 
-    @Column('tinyint')
+    @Column('tinyint',{default:1})
     state: number;
 
     @OneToMany(() => Auth, user => user.profile)

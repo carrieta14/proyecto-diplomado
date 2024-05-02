@@ -20,12 +20,15 @@ export class Auth {
     document_type: string;
 
     @Column()
+    document: number;
+
+    @Column()
     email: string;
 
     @Column()
     password: string;
 
-    @Column()
+    @Column({default:1})
     state: number;
 
     @ManyToOne(() => Profile, profile => profile.users)

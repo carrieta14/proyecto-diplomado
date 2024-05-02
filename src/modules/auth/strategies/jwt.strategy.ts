@@ -7,11 +7,12 @@ import { PayloadJwt } from "../../../interfaces/payload-jwt";
 import { Auth } from "../entities/auth.entity";
 
 @Injectable()
-export class JwtStrategies extends PassportStrategy( Strategy ) {
+export class JwtStrategy extends PassportStrategy( Strategy, 'jwt' ) {
     
     constructor(
         @InjectRepository(Auth)
         private userRepository: Repository<Auth>
+
     ) {
         super({
             secretOrKey: process.env.JWT_SECRET,
@@ -22,12 +23,12 @@ export class JwtStrategies extends PassportStrategy( Strategy ) {
     async validate(payload: PayloadJwt): Promise<Auth> {
 
         const { ID } = payload;
-        const user = await this.userRepository.findOneBy( { ID } );
+        const user = await this.userRepository.findOne( { where:{ID}, relations:['profile'] });
 
         if( !user ) throw new UnauthorizedException( `Token no valido` );
-        if( user.state != 1 ) throw new UnauthorizedException(`usuarion esta inactivo, comunicarse con IT`);
+        if( user.state != 1 ) throw new UnauthorizedException(`usuario esta inactivo, comunicarse con IT`);
 
-        return user;
+        return user; 
     }
 
 }
