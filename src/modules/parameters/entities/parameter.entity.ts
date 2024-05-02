@@ -13,12 +13,15 @@ export class Parameter {
     @Column({nullable: true})
     description: string;
 
+    @Column({default:1})
+    state: number;
+
     @OneToMany(() => ParameterValue, parameter_value => parameter_value.parameter)
     parameter_value: ParameterValue[];
     
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: Date;
-  
+
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
 }

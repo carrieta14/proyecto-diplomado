@@ -6,3 +6,4 @@ export class CreateBookDto {
     year: Date;
     state: number;
 }
+

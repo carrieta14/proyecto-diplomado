@@ -16,6 +16,7 @@ export class BooksService {
     private profileRepository: Repository<Profile>
   ) { }
 
+
   async createBook(rol: string, createBookDto: CreateBookDto) {
     const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
     if (perfil.name !== 'admin') {
@@ -37,16 +38,12 @@ export class BooksService {
     const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
     if (!perfil) {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
-    const books = await this.bookRepository.find({where:{state:1}});
+    } 
+    const books = await this.bookRepository.find();
     return books;
   }
 
   async findOne(id: string, rol: string) {
-    const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
-    if (!perfil) {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
     const book = await this.bookRepository.findOne({ where: { ID: id } });
     return book;
   }
@@ -79,7 +76,7 @@ export class BooksService {
     if (perfil.name !== 'admin') {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
     }
-
+    
     updateBookDto.state = 0;
     this.bookRepository.update(id, updateBookDto)
     return book;
