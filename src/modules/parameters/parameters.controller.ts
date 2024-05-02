@@ -4,12 +4,14 @@ import { CreateParameterDto } from './dto/create-parameter.dto';
 import { UpdateParameterDto } from './dto/update-parameter.dto';
 import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { response } from 'express';
+import { Profiles } from '../auth/decorators/profile.decorator';
 
 @Controller('parameters')
 export class ParametersController {
   constructor(private readonly parametersService: ParametersService) {}
 
   @UseGuards(jwtAuthGuard)
+  @Profiles(1001)
   @Post('/create')
   create(@Body() createParameterDto: CreateParameterDto,@Res() response:any) {
     return this.parametersService.create(createParameterDto).then((parameter)=> {
@@ -19,6 +21,7 @@ export class ParametersController {
   }
 
   @UseGuards(jwtAuthGuard)
+  @Profiles(1001)
   @Get('/show')
   show(@Res() response: any) {
     return this.parametersService.show().then((parameters)=> {
@@ -29,6 +32,7 @@ export class ParametersController {
   }
 
   @UseGuards(jwtAuthGuard)
+  @Profiles(1001)
   @Get('/detail')
   detail(@Query('id') id: number,@Res() response:any) {
     return this.parametersService.detail(id).then((parameter)=> {
@@ -39,6 +43,7 @@ export class ParametersController {
   }
 
   @UseGuards(jwtAuthGuard)
+  @Profiles(1001)
   @Patch('/update')
   update(@Query('id') id: number, @Body() updateParameterDto: UpdateParameterDto,@Res() response:any) {
     return this.parametersService.update(id, updateParameterDto).then((parameter)=> {
