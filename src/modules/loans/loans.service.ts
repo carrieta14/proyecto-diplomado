@@ -4,7 +4,6 @@ import { UpdateLoanDto } from './dto/update-loan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Loan } from './entities/loan.entity';
 import { Repository } from 'typeorm';
-import { Profile } from '../profiles/entities/profile.entity';
 import { Auth } from '../auth/entities/auth.entity';
 import { Book } from '../books/entities/book.entity';
 
@@ -14,19 +13,13 @@ export class LoansService {
   constructor(
     @InjectRepository(Loan)
     private loanRepository: Repository<Loan>,
-    @InjectRepository(Profile)
-    private profileRepository: Repository<Profile>,
     @InjectRepository(Auth)
     private userRepository: Repository<Auth>,
     @InjectRepository(Book)
     private bookReposiory: Repository<Book>
   ) { }
 
-  async create(rol: string, createLoanDto: CreateLoanDto, userID:string) {
-    const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
-    if (perfil.name !== 'admin' && perfil.name !=='adviser') {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
+  async create( createLoanDto: CreateLoanDto, userID:string) {
     const user = await this.userRepository.findOne({where:{ID:userID}});
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
@@ -37,29 +30,17 @@ export class LoansService {
     return { ...new_loan};
   }
 
-  async findAll(rol: string) {
-    const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
-    if (perfil.name !== 'admin' && perfil.name !=='adviser') {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
+  async findAll() {
     const loans = this.loanRepository.find({where:{state:1}});
     return loans;
   }
 
-  async findOne(id: string, rol: string) {
-    const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
-    if (perfil.name !== 'admin' && perfil.name !=='adviser') {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
+  async findOne(id: string) {
     const loan = this.loanRepository.findOne({where:{ID: id}});
     return loan;
   }
 
-  async update(id: string, rol:string, updateLoanDto: UpdateLoanDto) {
-    const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
-    if (perfil.name !== 'admin' && perfil.name !=='adviser') {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
+  async update(id: string, updateLoanDto: UpdateLoanDto) {
     const loan = await this.loanRepository.findOne({where:{ID:id}});
     if(!loan) {
       throw new NotFoundException(`Este registro no existe`);
@@ -77,19 +58,5 @@ export class LoansService {
     const books = await this.bookReposiory.find({ where: { ID: bookId } });
     loan.books = books;
     return this.loanRepository.save(loan);
-  }
-
- async remove(id: string, rol: string, updateLoanDto: UpdateLoanDto) {
-    const loan = this.loanRepository.findOne({where:{ID:id}});
-    if(!loan) {
-      throw new NotFoundException(`Este registro no existe`);
-    }
-    const perfil = await this.profileRepository.findOne({where:{ID:+rol}});
-    if (perfil.name !== 'admin') {
-      throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
-    updateLoanDto.state = 0;
-    
-    return this.loanRepository.update(id,updateLoanDto);
   }
 }

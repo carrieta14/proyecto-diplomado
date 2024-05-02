@@ -30,7 +30,13 @@ export class Book {
     @Column('datetime')
     year: Date;
 
-    @Column({default:1})
+    @Column()
+    amount: number;
+
+    @Column()
+    amountA: number;
+
+    @Column()
     state: number;
 
     // Relacion a tabla intermedia UserBook

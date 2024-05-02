@@ -37,11 +37,4 @@ export class BooksController {
   update(@Param('id') id: string, @Param('rol') rol: string ,@Body() updateBookDto: UpdateBookDto) {
     return this.booksService.updateBook(id, rol,updateBookDto);
   }
-
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
-  @Patch('/delete_book/:id/:rol')
-  remove(@Param('id') id: string, @Param('rol') rol: string ,@Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.remove(id, rol, updateBookDto);
-  }
 }

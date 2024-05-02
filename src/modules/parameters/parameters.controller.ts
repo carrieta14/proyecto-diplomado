@@ -5,6 +5,8 @@ import { UpdateParameterDto } from './dto/update-parameter.dto';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { Profiles } from '../auth/decorators/profile.decorator';
 import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
+import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { response } from 'express';
 
 @Controller('parameters')
 export class ParametersController {
