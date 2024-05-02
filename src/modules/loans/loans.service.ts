@@ -30,12 +30,12 @@ export class LoansService {
     return { ...new_loan};
   }
 
-  async findAll() {
+  async show() {
     const loans = this.loanRepository.find({where:{state:1}});
     return loans;
   }
 
-  async findOne(id: string) {
+  async detail(id: string) {
     const loan = this.loanRepository.findOne({where:{ID: id}});
     return loan;
   }

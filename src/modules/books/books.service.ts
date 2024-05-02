@@ -4,13 +4,17 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { Book } from './entities/book.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserBook } from '../auth/entities/authbooks.entity';
+import { Auth } from '../auth/entities/auth.entity';
 
 @Injectable()
 export class BooksService {
 
   constructor(
     @InjectRepository(Book)
-    private bookRepository: Repository<Book>
+    private bookRepository: Repository<Book>,
+    @InjectRepository(UserBook)
+    private favoriteRepository: Repository<UserBook>
   ) { }
 
   async createBook( createBookDto: CreateBookDto) {
@@ -51,5 +55,24 @@ export class BooksService {
     book.amountA = updateBookDto.amountA;
 
     return this.bookRepository.save(book);
+  }
+
+  async addFavorite(user: Auth, book: Book): Promise<UserBook> {
+    const favorite = new UserBook();
+    favorite.user = user;
+    favorite.book = book;
+    return this.favoriteRepository.save(favorite);
+  }
+
+  async removeFavorite(user: Auth, book: Book): Promise<void> {
+    await this.favoriteRepository.delete({ user, book });
+  }
+
+  async getUserFavorites(user: Auth): Promise<Book[]> {
+    const favorites = await this.favoriteRepository.find({
+      where: { user },
+      relations: ['book'],
+    });
+    return favorites.map(favorite => favorite.book);
   }
 }
