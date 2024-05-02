@@ -10,8 +10,8 @@ import { Profiles } from '../auth/decorators/profile.decorator';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
+  // @UseGuards(AuthGuard(),jwtProfileGuard)
+  // @Profiles(1001)
   @Post('/create')
   create(@Body() createBookDto: CreateBookDto, @Res() response) {
     return this.booksService.createBook(createBookDto).then((book) => {
