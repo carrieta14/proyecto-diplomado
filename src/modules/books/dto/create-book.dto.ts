@@ -4,5 +4,7 @@ export class CreateBookDto {
     description: string;
     availablity: boolean;
     year: Date;
+    amount:number;
+    amountA:number;
     state: number;
 }

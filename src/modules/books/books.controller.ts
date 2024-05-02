@@ -7,28 +7,23 @@ import { UpdateBookDto } from './dto/update-book.dto';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @Post('/create_book/:rol')
-  create(@Param('rol') rol: string,@Body() createBookDto: CreateBookDto) {
-    return this.booksService.createBook(rol, createBookDto);
+  @Post('/create')
+  create(@Body() createBookDto: CreateBookDto) {
+    return this.booksService.createBook(createBookDto);
   }
 
-  @Get(':rol')
-  findAll(@Param('rol') rol: string) {
-    return this.booksService.findAll(rol);
+  @Get()
+  findAll() {
+    return this.booksService.findAll();
   }
 
-  @Get(':id/:rol')
-  findOne(@Param('id') id: string, @Param('rol') rol: string) {
-    return this.booksService.findOne(id, rol);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.booksService.findOne(id);
   }
 
-  @Patch('/update_book/:id/:rol')
-  update(@Param('id') id: string, @Param('rol') rol: string ,@Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.updateBook(id, rol,updateBookDto);
-  }
-
-  @Patch('/delete_book/:id/:rol')
-  remove(@Param('id') id: string, @Param('rol') rol: string ,@Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.remove(id, rol, updateBookDto);
+  @Patch('/update/:id')
+  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.booksService.updateBook(id, updateBookDto);
   }
 }

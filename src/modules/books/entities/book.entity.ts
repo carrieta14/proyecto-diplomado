@@ -25,6 +25,12 @@ export class Book {
     year: Date;
 
     @Column()
+    amount: number;
+
+    @Column()
+    amountA: number;
+
+    @Column()
     state: number;
 
     // Relacion a tabla intermedia UserBook
