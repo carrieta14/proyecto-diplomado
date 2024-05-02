@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Loan } from './entities/loan.entity';
 import { Repository } from 'typeorm';
 import { Auth } from '../auth/entities/auth.entity';
+import { Book } from '../books/entities/book.entity';
 
 @Injectable()
 export class LoansService {
@@ -13,7 +14,9 @@ export class LoansService {
     @InjectRepository(Loan)
     private loanRepository: Repository<Loan>,
     @InjectRepository(Auth)
-    private userRepository: Repository<Auth>
+    private userRepository: Repository<Auth>,
+    @InjectRepository(Book)
+    private bookReposiory: Repository<Book>
   ) { }
 
   async create( createLoanDto: CreateLoanDto, userID:string) {
@@ -50,4 +53,10 @@ export class LoansService {
     return this.loanRepository.save(loan);
   }
 
+  async AssingBook(loanId: string, bookId: string): Promise<Loan> {
+    const loan = await this.loanRepository.findOne({ where: { ID: loanId } });
+    const books = await this.bookReposiory.find({ where: { ID: bookId } });
+    loan.books = books;
+    return this.loanRepository.save(loan);
+  }
 }

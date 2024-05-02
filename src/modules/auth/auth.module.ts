@@ -9,13 +9,13 @@ import { UserBook } from './entities/authbooks.entity';
 import { Profile } from '../profiles/entities/profile.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../../config/jwt.constants';
-import { Parameter } from '../parameters/entities/parameter.entity';
+import { ParameterValue } from '../parameter_values/entities/parameter_value.entity';
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
   imports: [
-    TypeOrmModule.forFeature([Auth,UserBook, Profile, Parameter]),
+    TypeOrmModule.forFeature([Auth,UserBook, Profile, ParameterValue]),
     PassportModule.register({defaultStrategy: 'jwt'}),
     JwtModule.registerAsync({
         imports:[],

@@ -6,9 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
-  console.log(process.env.JWT_SECRET);
-  
-//  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -18,6 +16,13 @@ async function bootstrap() {
     })
   )
 
+  app.enableCors({
+    origin: '*', // o tu dominio específico
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+  });
 
   await app.listen(3000);
 }

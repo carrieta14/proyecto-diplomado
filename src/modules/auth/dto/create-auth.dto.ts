@@ -19,9 +19,9 @@ export class CreateAuthDto {
     @IsNotEmpty()
     email: string;
     
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    document_type: string;
+    document_type: number;
 
     @IsNumber()
     @Min(10000000,{message:'La cedula no puede ser menor de 8 digitos'})
