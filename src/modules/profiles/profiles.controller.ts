@@ -2,15 +2,16 @@ import { Controller, Get, Post, Body, Param, Put, Res, HttpStatus, Query, UseGua
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { response } from 'express';
-import { profile } from 'console';
+import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
+import { Profiles } from '../auth/decorators/profile.decorator';
+import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
 
 @Controller('profiles')
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Post('/create')
   create(@Body() CreateProfileDto: CreateProfileDto, @Res() response: any) {
     return this.profilesService.create(CreateProfileDto).then((profile) => {
@@ -20,7 +21,8 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Get('/show')
   show(@Res() response: any) {
     return this.profilesService.show().then((profiles) => {
@@ -30,7 +32,8 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Get('/detail')
   detail(@Query('id') id: number,@Res() response: any) {
     return this.profilesService.detail(id).then((profile) => {
@@ -40,7 +43,8 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Put('/update')
   update(@Query('id') id: number, @Body() profile: UpdateProfileDto, @Res() response:any) {
     return this.profilesService.update(id, profile).then((profile) => {
@@ -50,7 +54,8 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Delete('/delete')
   updatestate(@Query('id') id: number, @Res() response: any) {
     return this.profilesService.updatestate(id).then((profile)=> {

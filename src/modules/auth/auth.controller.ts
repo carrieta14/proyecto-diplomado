@@ -7,14 +7,16 @@ import { response } from 'express';
 import { jwtAuthGuard } from './guard/jwt-auth.guard';
 import { jwtProfileGuard } from './guard/jwt-profile.guard';
 import { Profiles } from './decorators/profile.decorator';
+import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1)
   @Post('/create')
-  create(@Body() createAuthDto: CreateAuthDto, @Res() response: any) {
+  create(@Body() createAuthDto: CreateAuthDto, @Res() response: any): Promise<void> {
     return this.authService.create(createAuthDto).then((user) => {
       response.status(HttpStatus.CREATED).json({ data: user, code: 201, message: 'usuario creado con exito' });
     }).catch((error) => {
@@ -22,7 +24,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard,jwtProfileGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
   @Get('/show')
   show(@Res() response:any) {
@@ -33,7 +35,8 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Get('/detail')
   detail(@Query('id') id: string, @Res() response: any) {
     return this.authService.detail(id).then((user) => {
@@ -43,7 +46,8 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Put('/update')
   update(@Query('id') id: string, @Body() user: UpdateAuthDto, @Res() response:any) {
     return this.authService.update(id, user).then((user) => {
@@ -53,7 +57,8 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Delete('/delete')
   updatestate(@Query('id') id: string, @Res() response: any){
     return this.authService.updatestate(id).then((user) => {

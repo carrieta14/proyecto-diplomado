@@ -19,8 +19,6 @@ constructor(private readonly reflector: Reflector){}
 
         const {user} = context.switchToHttp().getRequest();
 
-        console.log(user)
-
         return Number(profiles) === user.profile.ID
 
     }

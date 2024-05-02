@@ -21,10 +21,16 @@ export class Book {
     @Column()
     availablity: boolean;
 
+    @Column()
+    amount: number
+
+    @Column()
+    amountA: number
+
     @Column('datetime')
     year: Date;
 
-    @Column()
+    @Column({default:1})
     state: number;
 
     // Relacion a tabla intermedia UserBook
