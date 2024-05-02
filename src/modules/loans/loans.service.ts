@@ -6,8 +6,7 @@ import { Loan } from './entities/loan.entity';
 import { Repository } from 'typeorm';
 import { Profile } from '../profiles/entities/profile.entity';
 import { Auth } from '../auth/entities/auth.entity';
-import { UserBook } from '../auth/entities/authbooks.entity';
-import { CreateAuthDto } from '../auth/dto/create-auth.dto';
+import { Book } from '../books/entities/book.entity';
 
 @Injectable()
 export class LoansService {
@@ -18,7 +17,9 @@ export class LoansService {
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
     @InjectRepository(Auth)
-    private userRepository: Repository<Auth>
+    private userRepository: Repository<Auth>,
+    @InjectRepository(Book)
+    private bookReposiory: Repository<Book>
   ) { }
 
   async create(rol: string, createLoanDto: CreateLoanDto, userID:string) {
@@ -68,6 +69,13 @@ export class LoansService {
     loan.return_date = updateLoanDto.return_date;
     loan.expected_return_date = updateLoanDto.expected_return_date;
 
+    return this.loanRepository.save(loan);
+  }
+
+  async AssingBook(loanId: string, bookId: string): Promise<Loan> {
+    const loan = await this.loanRepository.findOne({ where: { ID: loanId } });
+    const books = await this.bookReposiory.find({ where: { ID: bookId } });
+    loan.books = books;
     return this.loanRepository.save(loan);
   }
 
