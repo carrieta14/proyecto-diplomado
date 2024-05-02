@@ -17,7 +17,7 @@ export class Auth {
     last_name: string;
 
     @Column()
-    document_type: string;
+    document_type: number;
 
     @Column()
     document: number;
