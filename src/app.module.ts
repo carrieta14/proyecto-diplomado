@@ -21,7 +21,7 @@ import { join } from 'path';
     database: 'db-diplomado',
     entities: [__dirname + '/modules/**/entities/*.entity.js'],
     synchronize: false,
-    migrations: [__dirname + '/**/database/migrations/*.js'],
+    migrations: [__dirname + '/**/database/migrations/*.js '],
   }),
   ConfigModule.forRoot({
     isGlobal: true,
