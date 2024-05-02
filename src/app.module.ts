@@ -20,7 +20,7 @@ import { join } from 'path';
     password: 'root',
     database: 'db-diplomado',
     entities: [__dirname + '/modules/**/entities/*.entity.js'],
-    synchronize: false,
+    synchronize: true,
     migrations: [__dirname + '/**/database/migrations/*.js '],
   }),
   ConfigModule.forRoot({

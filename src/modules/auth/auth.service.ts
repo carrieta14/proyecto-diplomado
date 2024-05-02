@@ -1,4 +1,4 @@
-import { ConflictException, ConsoleLogger, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto} from './dto/create-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
@@ -8,8 +8,7 @@ import { Repository } from 'typeorm';
 import { Profile } from '../profiles/entities/profile.entity';
 import { JwtService } from '@nestjs/jwt';
 import { PayloadJwt } from 'src/interfaces/payload-jwt';
-import { profile } from 'console';
-import { Parameter } from '../parameters/entities/parameter.entity';
+import { ParameterValue } from '../parameter_values/entities/parameter_value.entity';
 
 
 @Injectable()
@@ -20,8 +19,8 @@ export class AuthService {
     private authRepository: Repository<Auth>,
     @InjectRepository(Profile)
     private profileRepository: Repository<Profile>,
-    @InjectRepository(Parameter)
-    private parameterRepository: Repository<Parameter>,
+    @InjectRepository(ParameterValue)
+    private parameterRepository: Repository<ParameterValue>,
     private readonly jwtServices: JwtService
   ) { }
 
@@ -30,7 +29,7 @@ export class AuthService {
     const user = await this.authRepository.findOne({ where: { email: createAuthDto.email} });
     if (user) throw new ConflictException(`Usuario con el correo ${createAuthDto.email} ya existe`);
 
-    const parameter = await this.parameterRepository.findOne({where: {name: createAuthDto.document_type}});
+    const parameter = await this.parameterRepository.findOne({where: {id_parameter: createAuthDto.document_type}});
     if(!parameter) throw new NotFoundException(`El parametro ${createAuthDto.document_type} no existe`) 
 
     const document = await this.authRepository.findOne({ where: { document: createAuthDto.document} });
@@ -44,7 +43,8 @@ export class AuthService {
 
     new_created.profile = profile
     await this.authRepository.save(new_created);
-
+    delete new_created.password;
+    
     return {
       ...new_created,
       token: await this.getJwtToken({

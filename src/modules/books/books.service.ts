@@ -16,7 +16,8 @@ export class BooksService {
     private profileRepository: Repository<Profile>
   ) { }
 
-  async createBook(rol: string,createBookDto: CreateBookDto) {
+
+  async createBook(rol: string, createBookDto: CreateBookDto) {
     const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
     if (perfil.name !== 'admin') {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
@@ -25,20 +26,19 @@ export class BooksService {
     if (book && book.title.toLocaleLowerCase() === createBookDto.title.toLocaleLowerCase()) {
       throw new ConflictException('Este Libro ya existe');
     }
-    console.log(createBookDto);
 
     const new_book = this.bookRepository.create(createBookDto);
+    new_book.availablity = true;
+    new_book.state = 1;
     await this.bookRepository.save(new_book);
-    console.log(new_book);
-
-    return { ...new_book };
+    return { ...new_book};
   }
 
   async findAll(rol: string) {
     const perfil = await this.profileRepository.findOne({ where: { ID: +rol } });
     if (!perfil) {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
-    }
+    } 
     const books = await this.bookRepository.find();
     return books;
   }
@@ -67,7 +67,6 @@ export class BooksService {
     return this.bookRepository.save(book);
   }
 
-
   async remove(id: string, rol: string, updateBookDto: UpdateBookDto) {
     const book = await this.bookRepository.findOne({ where: { ID: id } });
     if (!book) {
@@ -77,9 +76,9 @@ export class BooksService {
     if (perfil.name !== 'admin') {
       throw new UnauthorizedException('No tienes permisos para realizar esta acción');
     }
-
-    book.state = updateBookDto.state;
-
-    return this.bookRepository.save(book);
+    
+    updateBookDto.state = 0;
+    this.bookRepository.update(id, updateBookDto)
+    return book;
   }
 }
