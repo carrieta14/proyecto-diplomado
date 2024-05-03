@@ -7,7 +7,7 @@ import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
 import { Profiles } from '../auth/decorators/profile.decorator';
 import { Auth } from '../auth/entities/auth.entity';
 import { Book } from './entities/book.entity';
-import { response } from 'express';
+
 
 
 @Controller('books')
@@ -15,7 +15,7 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
+  @Profiles(1)
   @Post('/create')
   create(@Body() createBookDto: CreateBookDto, @Res() response) {
     return this.booksService.createBook(createBookDto).then((book) => {
