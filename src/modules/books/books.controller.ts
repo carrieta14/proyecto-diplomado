@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -12,29 +12,29 @@ export class BooksController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Post('/create_book/:rol')
-  create(@Param('rol') rol: string,@Body() createBookDto: CreateBookDto): Promise<{ ID: string; title: string; author: string; description: string; availablity: boolean; amount: number; amountA: number; year: Date; state: number; userBooks: import("c:/Users/DHHG1/Desktop/Ing. Danny/React Clases/Proyecto/proyecto-diplomado/src/modules/auth/entities/authbooks.entity").UserBook[]; loans: import("c:/Users/DHHG1/Desktop/Ing. Danny/React Clases/Proyecto/proyecto-diplomado/src/modules/loans/entities/loan.entity").Loan[]; createdAt: Date; updatedAt: Date; }> {
-    return this.booksService.createBook(rol, createBookDto);
+  @Post('/create')
+  create(@Body() createBookDto: CreateBookDto, @Res() response) {
+    return this.booksService.createBook(createBookDto).then((book) => {
+      response.status(HttpStatus.CREATED).json({data: book, code: 201, message: 'Libro creado con exito'});
+  }).catch((error)=> {
+      response.status(HttpStatus.BAD_REQUEST).json({message: error.message, code: '400'});
+  });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
-  @Get(':rol')
-  findAll(@Param('rol') rol: string) {
-    return this.booksService.findAll(rol);
+  @Get('/show')
+  findAll() {
+    return this.booksService.findAll();
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
-  @Get(':id/:rol')
-  findOne(@Param('id') id: string, @Param('rol') rol: string) {
-    return this.booksService.findOne(id, rol);
+  @Get('detail/:id')
+  findOne(@Param('id') id: string) {
+    return this.booksService.findOne(id);
   }
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
   @Patch('/update_book/:id/:rol')
-  update(@Param('id') id: string, @Param('rol') rol: string ,@Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.updateBook(id, rol,updateBookDto);
+  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.booksService.updateBook(id, updateBookDto);
   }
 }
