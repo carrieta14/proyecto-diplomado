@@ -3,8 +3,6 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
-import { response } from 'express';
-import { jwtAuthGuard } from './guard/jwt-auth.guard';
 import { jwtProfileGuard } from './guard/jwt-profile.guard';
 import { Profiles } from './decorators/profile.decorator';
 import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
@@ -13,8 +11,8 @@ import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @UseGuards(AuthGuard(),jwtProfileGuard)
-  // @Profiles(1)
+  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @Profiles(1001)
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any): Promise<void> {
     return this.authService.create(createAuthDto).then((user) => {
@@ -25,7 +23,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
+  @Profiles(1)
   @Get('/show')
   show(@Res() response:any) {
     return this.authService.show().then((users) => {
@@ -37,7 +35,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Get('/detail')
+  @Get('/detail/:id')
   detail(@Query('id') id: string, @Res() response: any) {
     return this.authService.detail(id).then((user) => {
       response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'Ususario encontrado' });
@@ -48,7 +46,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Put('/update')
+  @Put('/update/:id')
   update(@Query('id') id: string, @Body() user: UpdateAuthDto, @Res() response:any) {
     return this.authService.update(id, user).then((user) => {
       response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'usuario actualizado con exito' });
@@ -59,7 +57,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Delete('/delete')
+  @Delete('/delete/:id')
   updatestate(@Query('id') id: string, @Res() response: any){
     return this.authService.updatestate(id).then((user) => {
       response.status(HttpStatus.OK).json({data: user, code: 200, message: 'usuario eliminado con exito'})

@@ -57,10 +57,10 @@ export class BooksService {
     return this.bookRepository.save(book);
   }
 
-  async addFavorite(user: Auth, book: Book): Promise<UserBook> {
+  async addFavorite(userID: string, bookId: string): Promise<UserBook> {
     const favorite = new UserBook();
-    favorite.user = user;
-    favorite.book = book;
+    favorite.user.ID = userID;
+    favorite.book.ID = bookId;
     return this.favoriteRepository.save(favorite);
   }
 

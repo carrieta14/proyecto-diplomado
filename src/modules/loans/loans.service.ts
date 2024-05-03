@@ -6,6 +6,7 @@ import { Loan } from './entities/loan.entity';
 import { Repository } from 'typeorm';
 import { Auth } from '../auth/entities/auth.entity';
 import { Book } from '../books/entities/book.entity';
+import { isEmpty, isNotEmpty } from 'class-validator';
 
 @Injectable()
 export class LoansService {
@@ -58,5 +59,21 @@ export class LoansService {
     const books = await this.bookReposiory.find({ where: { ID: bookId } });
     loan.books = books;
     return this.loanRepository.save(loan);
+  }
+
+  async borrowedbooks(id: string){
+
+    const user = await this.userRepository.findOne({where:{ID:id}});
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    
+    const bookloans = await this.loanRepository.find({where:{state:1},relations:["books"]})
+    
+    if (bookloans.length === 0) {
+      throw new NotFoundException('No hay préstamos encontrados');
+  }
+
+    return bookloans;
   }
 }
