@@ -41,6 +41,7 @@ export class CreateAuthDto {
     @IsNotEmpty()
     profile: number|any;
 
+    @IsNumber()
     state: number;
     
 }

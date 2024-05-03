@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpStatus, Res, UseGuards, Put } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
@@ -8,22 +8,26 @@ import { Profiles } from '../auth/decorators/profile.decorator';
 
 @Controller('books')
 export class BooksController {
-  constructor(private readonly booksService: BooksService) {}
+  constructor(private readonly booksService: BooksService) { }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(AuthGuard(), jwtProfileGuard)
   @Profiles(1001)
   @Post('/create')
   create(@Body() createBookDto: CreateBookDto, @Res() response) {
     return this.booksService.createBook(createBookDto).then((book) => {
-      response.status(HttpStatus.CREATED).json({data: book, code: 201, message: 'Libro creado con exito'});
-  }).catch((error)=> {
-      response.status(HttpStatus.BAD_REQUEST).json({message: error.message, code: '400'});
-  });
+      response.status(HttpStatus.CREATED).json({ data: book, code: 201, message: 'Libro creado con exito' });
+    }).catch((error) => {
+      response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
+    });
   }
 
   @Get('/show')
-  findAll() {
-    return this.booksService.findAll();
+  show(@Res() response) {
+    return this.booksService.findAll().then((books) => {
+      response.status(HttpStatus.OK).json({ data: books, code: 200, message: 'Listado de libros existentes' });
+    }).catch(() => {
+      response.status(HttpStatus.NOT_FOUND).json({ message: 'No se encontraron libros existentes' });
+    });
   }
 
   @Get('detail/:id')
@@ -31,10 +35,14 @@ export class BooksController {
     return this.booksService.findOne(id);
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(AuthGuard(), jwtProfileGuard)
   @Profiles(1001)
-  @Patch('/update_book/:id/:rol')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.booksService.updateBook(id, updateBookDto);
+  @Put('/update/:id')
+  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto, @Res() response) {
+    return this.booksService.updateBook(id, updateBookDto).then((parameter) => {
+      response.status(HttpStatus.OK).json({ data: parameter, code: 200, message: 'parametro actualizado con exito' });
+    }).catch(() => {
+      response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo actualizar' });
+    });
   }
 }
