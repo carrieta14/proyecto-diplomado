@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength} from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength} from "class-validator";
 
 export class CreateProfileDto {
 
@@ -12,5 +12,6 @@ export class CreateProfileDto {
     @MaxLength(255)
     description?: string;
 
+    @IsNumber()
     state: number;
 }
