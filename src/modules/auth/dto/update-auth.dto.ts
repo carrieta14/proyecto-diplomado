@@ -34,7 +34,7 @@ export class UpdateAuthDto extends PartialType(CreateAuthDto) {
     @IsString()
     @MinLength(8)
     @IsNotEmpty()
-    @Matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\-_+=])(?=.*[a-zA-Z]).{8,}$/, { message: 'La contraseña debe tener al menos una letra mayúscula, una minúscula y un número' })
+    @Matches(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()\-_+=])(?=.*[a-zA-Z]).{8,}$/, { message: 'La contraseña debe tener al menos una letra mayúscula, una minúscula, un caracter especial y un número' })
     password?: string;
 
     @IsNumber()

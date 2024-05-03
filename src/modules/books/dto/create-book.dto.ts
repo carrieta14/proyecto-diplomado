@@ -32,10 +32,12 @@ export class CreateBookDto {
     @IsNotEmpty()
     amountA: number
 
+    @IsString()
     @IsNotEmpty()
     @IsDate()
     year: Date;
 
+    @IsNumber()
     state: number;
 }
 

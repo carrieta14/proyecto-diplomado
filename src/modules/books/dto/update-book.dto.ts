@@ -34,9 +34,11 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
     @IsNotEmpty()
     amountA: number
 
+    @IsDate()
     @IsNotEmpty()
     @IsDate()
     year?: Date;
 
+    @IsNumber()
     state?: number;
 }
