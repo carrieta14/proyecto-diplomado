@@ -43,6 +43,5 @@ export class UpdateAuthDto extends PartialType(CreateAuthDto) {
     profile?: number|any;
 
     @IsNumber()
-    @IsNotEmpty()
     state?: number;
 }

@@ -11,8 +11,8 @@ import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
+  // @UseGuards(AuthGuard(),jwtProfileGuard)
+  // @Profiles(1001)
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any): Promise<void> {
     return this.authService.create(createAuthDto).then((user) => {
@@ -23,7 +23,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1)
+  @Profiles(1001)
   @Get('/show')
   show(@Res() response:any) {
     return this.authService.show().then((users) => {
@@ -35,7 +35,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Get('/detail/:id')
+  @Get('/detail/')
   detail(@Query('id') id: string, @Res() response: any) {
     return this.authService.detail(id).then((user) => {
       response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'Ususario encontrado' });
@@ -46,24 +46,13 @@ export class AuthController {
 
   @UseGuards(AuthGuard(),jwtProfileGuard)
   @Profiles(1001)
-  @Put('/update/:id')
+  @Put('/update/')
   update(@Query('id') id: string, @Body() user: UpdateAuthDto, @Res() response:any) {
     return this.authService.update(id, user).then((user) => {
       response.status(HttpStatus.OK).json({ data: user, code: 200, message: 'usuario actualizado con exito' });
     }).catch(() => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo actualizar' });
     });
-  }
-
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1001)
-  @Delete('/delete/:id')
-  updatestate(@Query('id') id: string, @Res() response: any){
-    return this.authService.updatestate(id).then((user) => {
-      response.status(HttpStatus.OK).json({data: user, code: 200, message: 'usuario eliminado con exito'})
-    }).catch(() => {
-      response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo eliminar' });
-    })
   }
 
   @Post('/login')

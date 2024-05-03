@@ -36,7 +36,7 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard())
-  @Get('/detail/:id')
+  @Get('/detail/')
   findOne(@Query('id') id: string, @Res() response) {
     return this.booksService.findOne(id).then((book) => {
       response.status(HttpStatus.CREATED).json({data: book, code: 200, message: 'Libro encontrado'});
@@ -46,7 +46,7 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard())
-  @Post('/addFavorite/:id')
+  @Post('/addFavorite/')
   addFavorite(@Res() response, @Query('userId') userId: string, @Query('bookId') bookId: string) {
     return this.booksService.addFavorite(userId, bookId).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 201, message: 'Libro asignado en favorito' });
@@ -56,7 +56,7 @@ export class BooksController {
   }
 
   @UseGuards(AuthGuard())
-  @Delete('/removeFavorite/:id')
+  @Delete('/removeFavorite/')
   removeFavorite(@Res() response, @Query('user') user: Auth, @Query('book') book: Book) {
     return this.booksService.removeFavorite(user, book).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 200, message: 'Libro Eliminado en favorito' });
@@ -67,7 +67,7 @@ export class BooksController {
 
   @UseGuards(AuthGuard())
   @Get('/getUserFavorites/')
-  getUserFavorites(@Res() response, @Query('user') user: Auth) {
+  getUserFavorites(@Res() response, @Query('id') user: Auth) {
     return this.booksService.getUserFavorites(user).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 200, message: 'Lista de libros favoritos' });
     }).catch((error) => {
