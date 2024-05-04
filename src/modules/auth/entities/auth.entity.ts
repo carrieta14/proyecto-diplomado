@@ -17,7 +17,10 @@ export class Auth {
     last_name: string;
 
     @Column()
-    document_type: string;
+    document_type: number;
+
+    @Column()
+    document: number;
 
     @Column()
     email: string;
@@ -25,7 +28,7 @@ export class Auth {
     @Column()
     password: string;
 
-    @Column()
+    @Column({default:1})
     state: number;
 
     @ManyToOne(() => Profile, profile => profile.users)
