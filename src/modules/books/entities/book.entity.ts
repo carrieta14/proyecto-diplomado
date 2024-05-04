@@ -21,6 +21,12 @@ export class Book {
     @Column()
     availablity: boolean;
 
+    @Column()
+    amount: number
+
+    @Column()
+    amountA: number
+
     @Column('datetime')
     year: Date;
 

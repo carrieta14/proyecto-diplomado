@@ -17,7 +17,7 @@ export class Loan {
     @Column('datetime')
     loan_date: Date;
 
-    @Column('datetime')
+    @Column({type: 'datetime', nullable: true})
     return_date: Date;
 
     @Column('datetime')
