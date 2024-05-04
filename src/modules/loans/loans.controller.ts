@@ -2,13 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Query, HttpStat
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
+import { AuthGuard } from '@nestjs/passport/dist/auth.guard.js';
+import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @Controller('loans')
 export class LoansController {
   constructor(private readonly loansService: LoansService) { }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Post('/create/')
   create(@Body() createLoanDto: CreateLoanDto, @Res() response, @Query('userId') userId: string) {
     return this.loansService.create(createLoanDto, userId).then((loan) => {
@@ -18,7 +19,7 @@ export class LoansController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/show')
   show(@Res() response) {
     return this.loansService.show().then((loan) => {
@@ -28,7 +29,7 @@ export class LoansController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/detail/:id')
   detail(@Param('id') id: string, @Res() response) {
     return this.loansService.detail(id).then((loan) => {
@@ -38,7 +39,7 @@ export class LoansController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Put('/update/:id')
   update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto, @Res() response) {
     return this.loansService.update(id, updateLoanDto).then((loan) => {
@@ -48,7 +49,7 @@ export class LoansController {
     });
   }
   
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Post('/assing/')
   assing(@Res() response, @Query('loanId') loanId: string, @Query('bookId') bookId: string) {
     return this.loansService.AssingBook(loanId, bookId).then((loan) => {
@@ -58,7 +59,7 @@ export class LoansController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/borrowedbook')
   borrowedbook(@Query('id') id: string, @Res() response){
     return this.loansService.borrowedbooks(id).then((books) => {

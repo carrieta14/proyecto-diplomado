@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, Use
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
 import { Profiles } from '../auth/decorators/profile.decorator';
 import { Auth } from '../auth/entities/auth.entity';
 import { Book } from './entities/book.entity';
+import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 
 
@@ -14,8 +14,8 @@ import { Book } from './entities/book.entity';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
-  @Profiles(1)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
+  @Profiles(1001)
   @Post('/create')
   create(@Body() createBookDto: CreateBookDto, @Res() response) {
     return this.booksService.createBook(createBookDto).then((book) => {
@@ -25,7 +25,7 @@ export class BooksController {
   });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/show')
   findAll(@Res() response) {
     return this.booksService.findAll().then((books) => {
@@ -35,7 +35,7 @@ export class BooksController {
     })
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/detail/:id')
   findOne(@Query('id') id: string, @Res() response) {
     return this.booksService.findOne(id).then((book) => {
@@ -46,7 +46,7 @@ export class BooksController {
   }
 
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Post('/addFavorite/:id')
   addFavorite(@Res() response, @Query('userId') userId: string, @Query('bookId') bookId: string) {
     return this.booksService.addFavorite(userId, bookId).then((addFavorite) => {
@@ -56,7 +56,7 @@ export class BooksController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Delete('/removeFavorite/:id')
   removeFavorite(@Res() response, @Query('user') user: Auth, @Query('book') book: Book) {
     return this.booksService.removeFavorite(user, book).then((addFavorite) => {
@@ -66,7 +66,7 @@ export class BooksController {
     });
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(jwtAuthGuard)
   @Get('/getUserFavorites/')
   getUserFavorites(@Res() response, @Query('user') user: Auth) {
     return this.booksService.getUserFavorites(user).then((addFavorite) => {
@@ -77,7 +77,7 @@ export class BooksController {
   }
 
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Patch('/update_book/:id')
   update(@Query('id') id: string, @Body() updateBookDto: UpdateBookDto, @Res() response) {

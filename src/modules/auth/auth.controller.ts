@@ -5,13 +5,13 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
 import { jwtProfileGuard } from './guard/jwt-profile.guard';
 import { Profiles } from './decorators/profile.decorator';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
+import { jwtAuthGuard } from './guard/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any): Promise<void> {
@@ -22,7 +22,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1)
   @Get('/show')
   show(@Res() response:any) {
@@ -33,7 +33,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Get('/detail/:id')
   detail(@Query('id') id: string, @Res() response: any) {
@@ -44,7 +44,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Put('/update/:id')
   update(@Query('id') id: string, @Body() user: UpdateAuthDto, @Res() response:any) {
@@ -55,7 +55,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Delete('/delete/:id')
   updatestate(@Query('id') id: string, @Res() response: any){
