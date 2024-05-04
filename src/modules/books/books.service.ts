@@ -14,10 +14,12 @@ export class BooksService {
     @InjectRepository(Book)
     private bookRepository: Repository<Book>,
     @InjectRepository(UserBook)
-    private favoriteRepository: Repository<UserBook>
+    private favoriteRepository: Repository<UserBook>,
+    @InjectRepository(Auth)
+    private userRepository: Repository<Auth>
   ) { }
 
-  async createBook( createBookDto: CreateBookDto) {
+  async createBook(createBookDto: CreateBookDto) {
     const book = await this.bookRepository.findOne({ where: { title: createBookDto.title } });
     if (book && book.title.toLocaleLowerCase() === createBookDto.title.toLocaleLowerCase()) {
       throw new ConflictException('Este Libro ya existe');
@@ -27,11 +29,11 @@ export class BooksService {
     new_book.availablity = true;
     new_book.state = 1;
     await this.bookRepository.save(new_book);
-    return { ...new_book};
+    return { ...new_book };
   }
 
   async findAll() {
-    const books = await this.bookRepository.find({where:{state:1}});
+    const books = await this.bookRepository.find({ where: { state: 1 } });
     return books;
   }
 
@@ -58,21 +60,43 @@ export class BooksService {
   }
 
   async addFavorite(userID: string, bookId: string): Promise<UserBook> {
+    const user = await this.userRepository.findOne({ where: { ID: userID } });
+    if (!user) throw new NotFoundException('Usuario no existente');
+    const book = await this.bookRepository.findOne({ where: { ID: bookId } });
+    if (!book) throw new NotFoundException('Libro no existente');
     const favorite = new UserBook();
-    favorite.user.ID = userID;
-    favorite.book.ID = bookId;
+    favorite.user = user;
+    favorite.book = book;
+    const hoy = Date.now()
+    favorite.date_stamp = new Date(hoy);
     return this.favoriteRepository.save(favorite);
   }
 
-  async removeFavorite(user: Auth, book: Book): Promise<void> {
+  async removeFavorite(userID: string, bookId: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { ID: userID } });
+    if (!user) throw new NotFoundException('Usuario no existente');
+    const book = await this.bookRepository.findOne({ where: { ID: bookId } });
+    if (!book) throw new NotFoundException('Libro no existente');
     await this.favoriteRepository.delete({ user, book });
   }
 
-  async getUserFavorites(user: Auth): Promise<Book[]> {
+  async getUserFavorites(userId: string): Promise<Book[]> {
+    const user = await this.userRepository.findOne({ where: { ID: userId } });
+    if (!user) throw new NotFoundException('Usuario no existente');
     const favorites = await this.favoriteRepository.find({
-      where: { user },
-      relations: ['book'],
+      where: { user: { ID: userId } },
+      relations: ['book']
     });
     return favorites.map(favorite => favorite.book);
+  }
+
+  async checkFavorite(userId: string, bookId: string): Promise<boolean> {
+    const favorite = await this.favoriteRepository.findOne({
+      where: {
+        user: { ID: userId },
+        book: { ID: bookId }
+      }
+    });
+    return !!favorite;
   }
 }

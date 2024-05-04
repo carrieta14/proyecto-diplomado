@@ -2,8 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, Query, HttpStat
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard.js';
 import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { Profiles } from '../auth/decorators/profile.decorator';
+import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
 
 @Controller('loans')
 export class LoansController {
@@ -23,7 +24,7 @@ export class LoansController {
   @Get('/show')
   show(@Res() response) {
     return this.loansService.show().then((loan) => {
-      response.status(HttpStatus.OK).json({ data: loan, code: 201, message: 'Listado de prestamos activos' });
+      response.status(HttpStatus.OK).json({ data: loan, code: 200, message: 'Listado de prestamos activos' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     });
@@ -43,17 +44,18 @@ export class LoansController {
   @Put('/update/:id')
   update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto, @Res() response) {
     return this.loansService.update(id, updateLoanDto).then((loan) => {
-      response.status(HttpStatus.OK).json({ data: loan, code: 201, message: 'Prestamo Actualizado' });
+      response.status(HttpStatus.OK).json({ data: loan, code: 200, message: 'Prestamo Actualizado' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     });
   }
   
   @UseGuards(jwtAuthGuard)
+  @Profiles(1003)
   @Post('/assing/')
   assing(@Res() response, @Query('loanId') loanId: string, @Query('bookId') bookId: string) {
     return this.loansService.AssingBook(loanId, bookId).then((loan) => {
-      response.status(HttpStatus.CREATED).json({ data: loan, code: 201, message: 'Asignacion realizada con exito' });
+      response.status(HttpStatus.CREATED).json({ data: loan, code: 200, message: 'Asignacion realizada con exito' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     });
@@ -61,9 +63,9 @@ export class LoansController {
 
   @UseGuards(jwtAuthGuard)
   @Get('/borrowedbook')
-  borrowedbook(@Query('id') id: string, @Res() response){
+  borrowedbook(@Query('userId') id: string, @Res() response){
     return this.loansService.borrowedbooks(id).then((books) => {
-      response.status(HttpStatus.CREATED).json({ data: books, code: 201, message: 'Listado de prestamos del usuario' });
+      response.status(HttpStatus.CREATED).json({ data: books, code: 200, message: 'Listado de prestamos del usuario' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     })

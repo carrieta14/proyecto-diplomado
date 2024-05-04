@@ -7,4 +7,5 @@ export class UpdateLoanDto extends PartialType(CreateLoanDto) {
     expected_return_date?: Date;
     userId?: string;
     state?: number;
+    bookId?: string;
 }

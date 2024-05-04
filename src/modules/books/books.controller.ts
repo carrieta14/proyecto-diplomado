@@ -36,7 +36,7 @@ export class BooksController {
   }
 
   @UseGuards(jwtAuthGuard)
-  @Get('/detail/:id')
+  @Get('/detail/')
   findOne(@Query('id') id: string, @Res() response) {
     return this.booksService.findOne(id).then((book) => {
       response.status(HttpStatus.CREATED).json({data: book, code: 200, message: 'Libro encontrado'});
@@ -45,8 +45,9 @@ export class BooksController {
     });
   }
 
+
   @UseGuards(jwtAuthGuard)
-  @Post('/addFavorite/:id')
+  @Post('/addFavorite/')
   addFavorite(@Res() response, @Query('userId') userId: string, @Query('bookId') bookId: string) {
     return this.booksService.addFavorite(userId, bookId).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 201, message: 'Libro asignado en favorito' });
@@ -55,9 +56,10 @@ export class BooksController {
     });
   }
 
+
   @UseGuards(jwtAuthGuard)
-  @Delete('/removeFavorite/:id')
-  removeFavorite(@Res() response, @Query('user') user: Auth, @Query('book') book: Book) {
+  @Delete('/removeFavorite/')
+  removeFavorite(@Res() response, @Query('userId') user: string, @Query('bookId') book: string) {
     return this.booksService.removeFavorite(user, book).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 200, message: 'Libro Eliminado en favorito' });
     }).catch((error) => {
@@ -65,25 +67,35 @@ export class BooksController {
     });
   }
 
-  @UseGuards(jwtAuthGuard)
+
+  @UseGuards(jwtAuthGuard, jwtProfileGuard)
+  @Profiles(1003)
   @Get('/getUserFavorites/')
-  getUserFavorites(@Res() response, @Query('user') user: Auth) {
-    return this.booksService.getUserFavorites(user).then((addFavorite) => {
+  getUserFavorites(@Res() response, @Query('userId') userId: string) {
+    return this.booksService.getUserFavorites(userId).then((addFavorite) => {
       response.status(HttpStatus.CREATED).json({ data: addFavorite, code: 200, message: 'Lista de libros favoritos' });
     }).catch((error) => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
     });
   }
 
-
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
-  @Put('/update/:id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto, @Res() response) {
+  @Put('/update/')
+  update(@Query('id') id: string, @Body() updateBookDto: UpdateBookDto, @Res() response) {
     return this.booksService.updateBook(id, updateBookDto).then((parameter) => {
       response.status(HttpStatus.OK).json({ data: parameter, code: 200, message: 'parametro actualizado con exito' });
     }).catch(() => {
       response.status(HttpStatus.BAD_REQUEST).json({ message: 'No se pudo actualizar' });
     });
+  }
+
+  @Get('/check/')
+  async checkFavorite(
+    @Query('userId') userId: string,
+    @Query('bookId') bookId: string
+  ): Promise<{ isFavorite: boolean }> {
+    const isFavorite = await this.booksService.checkFavorite(userId, bookId);
+    return { isFavorite };
   }
 }
