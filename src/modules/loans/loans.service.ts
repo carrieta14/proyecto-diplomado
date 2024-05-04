@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,22 +17,43 @@ export class LoansService {
     @InjectRepository(Auth)
     private userRepository: Repository<Auth>,
     @InjectRepository(Book)
-    private bookReposiory: Repository<Book>
+    private bookRepository: Repository<Book>
   ) { }
 
-  async create( createLoanDto: CreateLoanDto, userID:string) {
-    const user = await this.userRepository.findOne({where:{ID:userID}});
+  async create(createLoanDto: CreateLoanDto, userID: string): Promise<Loan> {
+    const user = await this.userRepository.findOne({ where: { ID: userID } });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
-    const new_loan = this.loanRepository.create(createLoanDto);
-    new_loan.user = user;
-    await this.loanRepository.save(new_loan);
-    return { ...new_loan};
+
+    // Asegurar que el libro exista
+    const book = await this.bookRepository.findOne({ where: { ID: createLoanDto.bookId } });
+    if (!book) {
+      throw new NotFoundException('Libro no encontrado');
+    }
+
+    // Verificar si el usuario ya tiene un préstamo activo para el libro
+    const existingLoan = await this.loanRepository.createQueryBuilder('loan')
+      .innerJoin('loan.books', 'book', 'book.ID = :bookId', { bookId: createLoanDto.bookId })
+      .andWhere('loan.user.ID = :userId', { userId: userID })
+      .andWhere('loan.return_date IS NULL')
+      .getOne();
+
+    if (existingLoan) {
+      throw new BadRequestException(`Ya has prestado el libro: ${book.title} y no ha sido devuelto aún.`);
+    }
+    delete createLoanDto.bookId;
+    const newLoan = this.loanRepository.create({
+      ...createLoanDto,
+      user: user
+    });
+    await this.loanRepository.save(newLoan);
+    return newLoan;
   }
 
+
   async show() {
-    const loans = this.loanRepository.find({where:{state:1}});
+    const loans = this.loanRepository.find({ relations:["books"]});
     return loans;
   }
 
@@ -56,7 +77,7 @@ export class LoansService {
 
   async AssingBook(loanId: string, bookId: string): Promise<Loan> {
     const loan = await this.loanRepository.findOne({ where: { ID: loanId } });
-    const books = await this.bookReposiory.find({ where: { ID: bookId } });
+    const books = await this.bookRepository.find({ where: { ID: bookId } });
     loan.books = books;
     return this.loanRepository.save(loan);
   }
@@ -68,7 +89,7 @@ export class LoansService {
       throw new NotFoundException('Usuario no encontrado');
     }
     
-    const bookloans = await this.loanRepository.find({where:{state:1},relations:["books"]})
+    const bookloans = await this.loanRepository.find({where: { user: { ID: id }, state: 1 }, relations:["books"]})
     
     if (bookloans.length === 0) {
       throw new NotFoundException('No hay préstamos encontrados');
