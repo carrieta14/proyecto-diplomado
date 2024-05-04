@@ -14,11 +14,11 @@ import { join } from 'path';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
+    host: 'roundhouse.proxy.rlwy.net',
+    port: 13155,
     username: 'root',
-    password: 'root',
-    database: 'db-diplomado',
+    password: 'KGwRIWhdYxrEDkWaCPgUFrCAfqWPXidp',
+    database: 'railway',
     entities: [__dirname + '/modules/**/entities/*.entity.js'],
     synchronize: true,
     migrations: [__dirname + '/**/database/migrations/*.js '],

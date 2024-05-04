@@ -11,9 +11,6 @@ import { jwtAuthGuard } from './guard/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-
-  @UseGuards(jwtAuthGuard,jwtProfileGuard)
-  @Profiles(1001)
   @Post('/create')
   create(@Body() createAuthDto: CreateAuthDto, @Res() response: any): Promise<void> {
     return this.authService.create(createAuthDto).then((user) => {
@@ -34,8 +31,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(jwtAuthGuard,jwtProfileGuard)
-  @Profiles(1001)
+  @UseGuards(jwtAuthGuard)
   @Get('/detail/')
   detail(@Query('id') id: string, @Res() response: any) {
     return this.authService.detail(id).then((user) => {

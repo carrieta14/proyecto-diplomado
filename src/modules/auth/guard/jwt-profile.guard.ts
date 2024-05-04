@@ -13,14 +13,14 @@ constructor(private readonly reflector: Reflector){}
             context.getHandler(),
             context.getClass()
         ])
-        if(!profiles){
+
+        if (!profiles || profiles.length === 0) {
             return true;
         }
 
         const {user} = context.switchToHttp().getRequest();
 
-        return Number(profiles) === user.profile.ID
-
+        return profiles.includes(user.profile.ID);
     }
 
     

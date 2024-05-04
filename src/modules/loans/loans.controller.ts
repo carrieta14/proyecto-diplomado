@@ -51,7 +51,6 @@ export class LoansController {
   }
   
   @UseGuards(jwtAuthGuard)
-  @Profiles(1003)
   @Post('/assing/')
   assing(@Res() response, @Query('loanId') loanId: string, @Query('bookId') bookId: string) {
     return this.loansService.AssingBook(loanId, bookId).then((loan) => {
