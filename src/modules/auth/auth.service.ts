@@ -57,7 +57,6 @@ export class AuthService {
 
   async show(): Promise<any> {
     let users = await this.authRepository.find({where:{state:1},relations: ['profile'] });
-    console.log(users);
     users.map(user => {
       delete user.password
       return user;
@@ -83,6 +82,7 @@ export class AuthService {
         user.first_name = updateAuthDto.first_name;
         user.last_name = updateAuthDto.last_name;
         if (updateAuthDto.email != undefined ||updateAuthDto.email != null) user.email = updateAuthDto.email.toLowerCase();
+        user.document = updateAuthDto.document;
         user.password = updateAuthDto.password;
         user.state = updateAuthDto.state;
 

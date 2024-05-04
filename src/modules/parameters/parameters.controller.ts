@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Delete, UseGuards, Res, Query, HttpStatus } from '@nestjs/common';
+
+import { Controller, Get, Post, Body, Delete, UseGuards, Res, Query, HttpStatus, Put } from '@nestjs/common';
 import { ParametersService } from './parameters.service';
 import { CreateParameterDto } from './dto/create-parameter.dto';
 import { UpdateParameterDto } from './dto/update-parameter.dto';
@@ -45,7 +46,8 @@ export class ParametersController {
 
   @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
-  @Patch('/update/:id')
+
+  @Put('/update')
   update(@Query('id') id: number, @Body() updateParameterDto: UpdateParameterDto,@Res() response:any) {
     return this.parametersService.update(id, updateParameterDto).then((parameter)=> {
       response.status(HttpStatus.OK).json({ data: parameter, code: 200, message: 'Parametro actualizado con exito' });
