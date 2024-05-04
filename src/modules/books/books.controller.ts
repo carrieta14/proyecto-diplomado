@@ -12,9 +12,20 @@ export class BooksController {
     return this.booksService.create(createBookDto);
   }
 
+<<<<<<< Updated upstream
   @Get()
   findAll() {
     return this.booksService.findAll();
+=======
+  // @UseGuards(jwtAuthGuard)
+  @Get('/show')
+  show(@Res() response) {
+    return this.booksService.findAll().then((books) => {
+      response.status(HttpStatus.OK).json({ data: books, code: 200, message: 'Listado de libros existentes' });
+    }).catch(() => {
+      response.status(HttpStatus.NOT_FOUND).json({ message: 'No se encontraron libros existentes' });
+    });
+>>>>>>> Stashed changes
   }
 
   @Get(':id')
