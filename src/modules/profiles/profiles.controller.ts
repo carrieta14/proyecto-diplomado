@@ -2,15 +2,15 @@ import { Controller, Get, Post, Body, Param, Put, Res, HttpStatus, Query, UseGua
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { AuthGuard } from '@nestjs/passport/dist/auth.guard';
 import { Profiles } from '../auth/decorators/profile.decorator';
 import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
+import { jwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @Controller('profiles')
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Post('/create')
   create(@Body() CreateProfileDto: CreateProfileDto, @Res() response: any) {
@@ -21,7 +21,7 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
   @Get('/show')
   show(@Res() response: any) {
@@ -32,9 +32,9 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
-  @Get('/detail')
+  @Get('/detail/:id')
   detail(@Query('id') id: number,@Res() response: any) {
     return this.profilesService.detail(id).then((profile) => {
       response.status(HttpStatus.OK).json({ data: profile, code: 200, message: 'Perfil encontrado' });
@@ -43,9 +43,9 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
-  @Put('/update')
+  @Put('/update/:id')
   update(@Query('id') id: number, @Body() profile: UpdateProfileDto, @Res() response:any) {
     return this.profilesService.update(id, profile).then((profile) => {
       response.status(HttpStatus.OK).json({ data: profile, code: 200, message: 'Perfil actualizado con exito' });
@@ -54,9 +54,9 @@ export class ProfilesController {
     });
   }
 
-  @UseGuards(AuthGuard(),jwtProfileGuard)
+  @UseGuards(jwtAuthGuard,jwtProfileGuard)
   @Profiles(1001)
-  @Delete('/delete')
+  @Delete('/delete/:id')
   updatestate(@Query('id') id: number, @Res() response: any) {
     return this.profilesService.updatestate(id).then((profile)=> {
       response.status(HttpStatus.OK).json({data: profile, code: 200, message: 'Perfil eliminado con exito'})
