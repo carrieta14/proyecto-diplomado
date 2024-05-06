@@ -10,15 +10,17 @@ import { LoansModule } from './modules/loans/loans.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
+import 'dotenv/config';
+import { dbConstants } from './config/db.constants';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
-    host: 'roundhouse.proxy.rlwy.net',
-    port: 13155,
-    username: 'root',
-    password: 'KGwRIWhdYxrEDkWaCPgUFrCAfqWPXidp',
-    database: 'railway',
+    host: dbConstants().host,
+    port: dbConstants().port,
+    username: dbConstants().user,
+    password: dbConstants().password,
+    database: dbConstants().database,
     entities: [__dirname + '/modules/**/entities/*.entity.js'],
     synchronize: true,
     migrations: [__dirname + '/**/database/migrations/*.js '],

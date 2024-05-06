@@ -10,7 +10,7 @@ import { jwtProfileGuard } from '../auth/guard/jwt-profile.guard';
 export class LoansController {
   constructor(private readonly loansService: LoansService) { }
 
-  @UseGuards(jwtAuthGuard)
+  // @UseGuards(jwtAuthGuard)
   @Post('/create/')
   create(@Body() createLoanDto: CreateLoanDto, @Res() response, @Query('userId') userId: string) {
     return this.loansService.create(createLoanDto, userId).then((loan) => {
@@ -50,7 +50,7 @@ export class LoansController {
     });
   }
   
-  @UseGuards(jwtAuthGuard)
+  // @UseGuards(jwtAuthGuard)
   @Post('/assing/')
   assing(@Res() response, @Query('loanId') loanId: string, @Query('bookId') bookId: string) {
     return this.loansService.AssingBook(loanId, bookId).then((loan) => {

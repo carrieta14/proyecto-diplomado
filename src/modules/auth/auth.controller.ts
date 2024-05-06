@@ -16,7 +16,7 @@ export class AuthController {
     return this.authService.create(createAuthDto).then((user) => {
       response.status(HttpStatus.CREATED).json({ data: user, code: 201, message: 'usuario creado con exito' });
     }).catch((error) => {
-      response.status(HttpStatus.BAD_REQUEST).json({ message: error.message, code: '400' });
+      response.status(HttpStatus.BAD_REQUEST).json({ message: 'El usuario ya existe', code: '400' });
     });
   }
 
